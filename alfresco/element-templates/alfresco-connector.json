@@ -40,222 +40,251 @@
       }
     ],
     "properties": [
-      {
-        "type": "Hidden",
-        "value": "io.camunda:http-json:1",
-        "binding": {
-          "type": "zeebe:taskDefinition:type"
-        }
-      },
-      {
-        "type": "Hidden",
-        "value": "basic",
-        "binding": {
-          "type": "zeebe:input",
-          "name": "authentication.type"
-        }
-      },
-      {
-        "label": "Alfresco Base Url",
-        "description": "The base url of the Alfresco instance",
-        "group": "authentication",
-        "type": "String",
-        "feel": "optional",
-        "binding": {
-          "type": "zeebe:input",
-          "name": "alfrescoBaseUrl"
-        },
-        "constraints": {
-          "notEmpty": true
-        }
-      },
-      {
-        "label": "Alfresco Username",
-        "description": "The user to perform the action with",
-        "group": "authentication",
-        "type": "String",
-        "feel": "optional",
-        "binding": {
-          "type": "zeebe:input",
-          "name": "authentication.username"
-        },
-        "constraints": {
-          "notEmpty": true
-        }
-      },
-      {
-        "label": "Alfresco Password",
-        "description": "The password of the user",
-        "group": "authentication",
-        "type": "String",
-        "feel": "optional",
-        "binding": {
-          "type": "zeebe:input",
-          "name": "authentication.password"
-        },
-        "constraints": {
-          "notEmpty": true
-        }
-      },
-      {
-        "label": "Operation group",
-        "id": "operationGroup",
-        "group": "operation",
-        "description": "Choose operation group",
-        "type": "Dropdown",
-        "choices": [
-          {
-            "name": "Folders",
-            "value": "folders"
-          }
-        ],
-        "binding": {
-          "type": "zeebe:input",
-          "name": "operationGroup"
-        }
-      },
-      {
-        "label": "Operation",
-        "id": "operation",
-        "group": "operation",
-        "description": "Choose operation to perform",
-        "type": "Dropdown",
-        "choices": [
-          {
-            "name": "Create a folder",
-            "value": "createFolder"
-          }
-        ],
-        "binding": {
-          "type": "zeebe:input",
-          "name": "operation"
-        },
-        "condition": {
-          "property": "operationGroup",
-          "equals": "folders"
-        }
-      },
-      {
-        "type": "Hidden",
-        "value": "post",
-        "binding": {
-          "type": "zeebe:input",
-          "name": "method"
-        },
-        "condition": {
-          "property": "operation",
-          "oneOf": [
-            "createFolder"
-          ]
-        }
-      },
-      {
-        "label": "Parent ID",
-        "description": "Globally unique identifier for the parent",
-        "group": "operation",
-        "type": "String",
-        "feel": "optional",
-        "binding": {
-          "type": "zeebe:input",
-          "name": "parentId"
-        },
-        "constraints": {
-          "notEmpty": true
-        },
-        "condition": {
-          "property": "operation",
-          "oneOf": [
-            "createFolder"
-          ]
-        }
-      },
-      {
-        "type": "Hidden",
-        "value": "=alfrescoBaseUrl + \"/api/-default-/public/alfresco/versions/1/nodes/\" + parentId + \"/children?autoRename=true\"",
-        "binding": {
-          "type": "zeebe:input",
-          "name": "url"
-        },
-        "condition": {
-          "property": "operation",
-          "oneOf": [
-            "createFolder"
-          ]
-        }
-      },
-      {
-        "label": "Folder name",
-        "description": "The name of the folder that will be created",
-        "group": "operation",
-        "type": "String",
-        "feel": "optional",
-        "binding": {
-          "type": "zeebe:input",
-          "name": "folderName"
-        },
-        "constraints": {
-          "notEmpty": true
-        },
-        "condition": {
-          "property": "operation",
-          "oneOf": [
-            "createFolder"
-          ]
-        }
-      },
-      {
-        "type": "Hidden",
-        "value": "={\"name\": if folderName = null then null else folderName, \"nodeType\": \"cm:folder\"}",
-        "binding": {
-          "type": "zeebe:input",
-          "name": "body"
-        },
-        "condition": {
-          "property": "operation",
-          "oneOf": [
-            "createFolder"
-          ]
-        }
-      },
-      {
-        "type": "Hidden",
-        "value": "20",
-        "binding": {
-          "type": "zeebe:input",
-          "name": "connectionTimeoutInSeconds"
-        }
-      },
-      {
-        "label": "Result Variable",
-        "description": "Name of variable to store the response in. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#result-variable\" target=\"_blank\">documentation</a>",
-        "group": "output",
-        "type": "String",
-        "binding": {
-          "type": "zeebe:taskHeader",
-          "key": "resultVariable"
-        }
-      },
-      {
-        "label": "Result Expression",
-        "description": "Expression to map the response into process variables. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#result-expression\" target=\"_blank\">documentation</a>",
-        "group": "output",
-        "type": "Text",
-        "feel": "required",
-        "binding": {
-          "type": "zeebe:taskHeader",
-          "key": "resultExpression"
-        }
-      },
-      {
-        "label": "Error Expression",
-        "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#bpmn-errors\" target=\"_blank\">documentation</a>",
-        "group": "errors",
-        "type": "Text",
-        "feel": "required",
-        "binding": {
-          "type": "zeebe:taskHeader",
-          "key": "errorExpression"
-        }
+    {
+      "type": "Hidden",
+      "value": "io.camunda:http-json:1",
+      "binding": {
+        "type": "zeebe:taskDefinition:type"
       }
-    ]
-  }
+    },
+    {
+      "type": "Hidden",
+      "value": "={\"Content-Type\":\"application/json\"}",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "headers"
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "basic",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "authentication.type"
+      }
+    },
+    {
+      "label": "Alfresco Base Url",
+      "description": "The base url of the Alfresco instance",
+      "group": "authentication",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "alfrescoBaseUrl"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Alfresco Username",
+      "description": "The user to perform the action with",
+      "group": "authentication",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "authentication.username"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Alfresco Password",
+      "description": "The password of the user",
+      "group": "authentication",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "authentication.password"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Operation group",
+      "id": "operationGroup",
+      "group": "operation",
+      "description": "Choose operation group",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Folders",
+          "value": "folders"
+        }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operationGroup"
+      }
+    },
+    {
+      "label": "Operation",
+      "id": "operation",
+      "group": "operation",
+      "description": "Choose operation to perform",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Create a folder",
+          "value": "createFolder"
+        }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operation"
+      },
+      "condition": {
+        "property": "operationGroup",
+        "equals": "folders"
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "post",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "method"
+      },
+      "condition": {
+        "property": "operation",
+        "oneOf": [
+          "createFolder"
+        ]
+      }
+    },
+    {
+      "label": "Parent ID",
+      "description": "Globally unique identifier for the parent",
+      "group": "operation",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "parentId"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "operation",
+        "oneOf": [
+          "createFolder"
+        ]
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "=alfrescoBaseUrl + \"/api/-default-/public/alfresco/versions/1/nodes/\" + parentId + \"/children?autoRename=true\"",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "url"
+      },
+      "condition": {
+        "property": "operation",
+        "oneOf": [
+          "createFolder"
+        ]
+      }
+    },
+    {
+      "label": "Folder name",
+      "description": "The name of the folder that will be created",
+      "group": "operation",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "folderName"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "operation",
+        "oneOf": [
+          "createFolder"
+        ]
+      }
+    },
+    {
+      "label": "Folder Type",
+      "description": "Custom folder type",
+      "group": "operation",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "folderType"
+      },
+      "value": "cm:folder",
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "operation",
+        "oneOf": [
+          "createFolder"
+        ]
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "={\"name\": if folderName = null then null else folderName, \"nodeType\": folderType}",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "body"
+      },
+      "condition": {
+        "property": "operation",
+        "oneOf": [
+          "createFolder"
+        ]
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "20",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "connectionTimeoutInSeconds"
+      }
+    },
+    {
+      "label": "Result Variable",
+      "description": "Name of variable to store the response in. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#result-variable\" target=\"_blank\">documentation</a>",
+      "group": "output",
+      "type": "String",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultVariable"
+      }
+    },
+    {
+      "label": "Result Expression",
+      "description": "Expression to map the response into process variables. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#result-expression\" target=\"_blank\">documentation</a>",
+      "group": "output",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultExpression"
+      }
+    },
+    {
+      "label": "Error Expression",
+      "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#bpmn-errors\" target=\"_blank\">documentation</a>",
+      "group": "errors",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "errorExpression"
+      }
+    }
+  ]
+}
