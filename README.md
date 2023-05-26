@@ -13,9 +13,13 @@ Currently only basic authentication is supported. You can set the username and p
 
 ## Supported operations
 - Create a folder
+- update a folder
 
 ### Create a folder operation
-To create a folder in ACS you need to provide the nodeId of the parent folder and a name for the folder. If a folder with the name already exists ACS will automatically rename it.
+To create a folder in ACS you need to provide the nodeId of the parent folder and a name for the folder. If a folder with the name already exists ACS will automatically rename it. Optionally you can set the type of the to be created folder, the default is cm:folder.
+
+### Update a folder operation
+To update a folder in ACS you need to provide the nodeId of the folder and the payload with the properties you want to update.
 
 ## Contact
 If you have any questions or want to contribute please contact Maarten van Veelen (maarten.vanveelen@incentro.com) or use Github to reach me.
