@@ -5,7 +5,7 @@ This repository contains the Camunda Connectors developed by Incentro
 Alfresco Content Servces (ACS) is a very popular Open Source Document Management System (DMS). And if you might know: every process contains a document so to have an integration between Camunda and Alfresco is relevant. Incentro is an Alfresco partner for years and have a lot of experience with the platform.
 
 ## How it works
-Luckily ACS comes with an extensive REST API. Therefor we were able to create this connector using the REST protocol connector from Camunda, which means only configuration was required and no coding. For more information about the Alfresco API please have a look here: [https://api-explorer.alfresco.com/api-explorer/#/](https://api-explorer.alfresco.com/api-explorer/#/) 
+Luckily ACS comes with an extensive REST API. Therefore we were able to create this connector using the REST protocol connector from Camunda, which means only configuration was required and no coding. For more information about the Alfresco API please have a look here: [https://api-explorer.alfresco.com/api-explorer/#/](https://api-explorer.alfresco.com/api-explorer/#/) 
 To install this connector: add a connector template to your BPMN project and use the contents of the alfresco-connector.json file. Now you are ready to use the connector in your BPMN diagrams.
 
 ## Authentication
