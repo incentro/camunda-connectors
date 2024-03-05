@@ -1,0 +1,472 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "Robocorp connector",
+  "id": "b9385f47-ed1a-4c99-b012-a35a45c05ae7",
+  "version": 1708331710945,
+  "description": "Perform actions with Robocorp",
+  "documentationRef": "https://docs.camunda.io/docs/components/connectors/protocol/rest/",
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": [
+    "bpmn:Task"
+  ],
+  "elementType": {
+    "value": "bpmn:ServiceTask"
+  },
+  "groups": [
+    {
+      "id": "authentication",
+      "label": "Authentication"
+    },
+    {
+      "id": "operation",
+      "label": "Operation"
+    },
+    {
+      "id": "configuration",
+      "label": "Configuration"
+    },
+    {
+      "id": "timeout",
+      "label": "Connection timeout"
+    },
+    {
+      "id": "payload",
+      "label": "Payload"
+    },
+    {
+      "id": "output",
+      "label": "Output mapping"
+    },
+    {
+      "id": "error",
+      "label": "Error handling"
+    },
+    {
+      "id": "retries",
+      "label": "Retries"
+    }
+  ],
+  "properties": [
+    {
+      "label": "Operation group",
+      "id": "operationGroup",
+      "group": "operation",
+      "description": "Choose operation group",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Process-run",
+          "value": "process-run"
+        },
+        {
+          "name": "Workspace",
+          "value": "workspace"
+        }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operationGroup"
+      }
+    },
+    {
+      "label": "Operation type",
+      "id": "operationType",
+      "group": "operation",
+      "description": "Choose operation to perform",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Start process run",
+          "value": "startProcessRun"
+        },
+        {
+          "name": "Stop process run",
+          "value": "stopProcessRun"
+        }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operation"
+      },
+      "condition": {
+        "property": "operationGroup",
+        "equals": "process-run"
+      }
+    },
+    {
+      "label": "Operation type",
+      "id": "operationTypeWorkspace",
+      "group": "operation",
+      "description": "Choose operation to perform",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Get workspace",
+          "value": "getWorkspace"
+        }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operation"
+      },
+      "condition": {
+        "property": "operationGroup",
+        "equals": "workspace"
+      }
+    },
+    {
+      "value": "io.camunda:http-json:1",
+      "binding": {
+        "property": "type",
+        "type": "zeebe:taskDefinition"
+      },
+      "type": "Hidden"
+    },
+    {
+      "label": "Robocorp API key",
+      "description": "Enter your robocorp API key. Note: use a secret.",
+      "value": "",
+      "group": "authentication",
+      "binding": {
+        "name": "apiKey",
+        "type": "zeebe:input"
+      },
+      "type": "String",
+      "feel": "optional",
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "operationGroup",
+        "oneOf": [
+          "process-run",
+          "workspace"
+        ]
+      }
+    },
+    {
+      "label": "Robocorp instance URL",
+      "group": "configuration",
+      "type": "String",
+      "value": "cloud.robocorp.com",
+      "description": "",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "cloudUrl"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Process Id",
+      "description": "Your process id",
+      "group": "configuration",
+      "type": "String",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "processId"
+      },
+      "condition": {
+        "property": "operationType",
+        "oneOf": [
+          "startProcessRun"
+        ]
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Process run id",
+      "description": "Process run id that you want to stop",
+      "group": "configuration",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "processRunId"
+      },
+      "condition": {
+        "property": "operationType",
+        "oneOf": [
+          "stopProcessRun"
+        ]
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Robocorp workspace",
+      "description": "Your workspace id",
+      "group": "configuration",
+      "type": "String",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "workspaceId"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "operationGroup",
+        "oneOf": [
+          "process-run",
+          "workspace"
+        ]
+      }
+    },
+    {
+      "group": "configuration",
+      "type": "Hidden",
+      "value": "={\"Authorization\": \"RC-WSKEY \"+ apiKey, \"Content-Type\":\"application/json\"}",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "headers"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Set remaining work items as done",
+      "description": "Select if you want to mark the remaining items as done. true or false.",
+      "group": "payload",
+      "type": "String",
+      "value": "=true",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "set_remaining_work_items_as_done"
+      },
+      "condition": {
+        "property": "operationType",
+        "oneOf": [
+          "stopProcessRun"
+        ]
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Terminate ongoing activity runs",
+      "description": "Select if you want to terminate ongoing activity runs.  true or false.",
+      "group": "payload",
+      "type": "String",
+      "value": "=true",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "terminate_ongoing_activity_runs"
+      },
+      "condition": {
+        "property": "operationType",
+        "oneOf": [
+          "stopProcessRun"
+        ]
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Reason",
+      "description": "Enter a reason",
+      "group": "payload",
+      "type": "String",
+      "value": "Camunda",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "reason"
+      },
+      "condition": {
+        "property": "operationType",
+        "oneOf": [
+          "stopProcessRun"
+        ]
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "body",
+      "label": "Request body",
+      "description": "Payload to send with the request",
+      "optional": true,
+      "feel": "optional",
+      "group": "payload",
+      "binding": {
+        "name": "body",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "operationType",
+        "oneOf": [
+          "stopProcessRun"
+        ]
+      },
+      "type": "String",
+      "value": "={\"set_remaining_work_items_as_done\":set_remaining_work_items_as_done, \"terminate_ongoing_activity_runs\": terminate_ongoing_activity_runs}"
+    },
+    {
+      "id": "methodPost",
+      "group": "configuration",
+      "type": "Hidden",
+      "value": "post",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "method"
+      },
+      "condition": {
+        "property": "operationType",
+        "oneOf": [
+          "startProcessRun",
+          "stopProcessRun"
+        ]
+      }
+    },
+    {
+      "id": "methodGet",
+      "group": "configuration",
+      "type": "Hidden",
+      "value": "get",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "method"
+      },
+      "condition": {
+        "property": "operationTypeWorkspace",
+        "oneOf": [
+          "getWorkspace"
+        ]
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "=\"https:\"+\"//\"+cloudUrl+\"/api/v1/workspaces/\"+workspaceId+\"/processes/\"+processId+\"/process-runs\"",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "url"
+      },
+      "condition": {
+        "property": "operationType",
+        "oneOf": [
+          "startProcessRun"
+        ]
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "=\"https:\"+\"//\"+cloudUrl+\"/api/v1/workspaces/\"+workspaceId+\"/process-runs/\"+processRunId+\"/stop\"",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "url"
+      },
+      "condition": {
+        "property": "operationType",
+        "oneOf": [
+          "stopProcessRun"
+        ]
+      }
+    },
+    {
+      "type": "Hidden",
+      "value": "=\"https:\"+\"//\"+cloudUrl+\"/api/v1/workspaces/\"+workspaceId",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "url"
+      },
+      "condition": {
+        "property": "operationTypeWorkspace",
+        "oneOf": [
+          "getWorkspace"
+        ]
+      }
+    },
+    {
+      "id": "connectionTimeoutInSeconds",
+      "label": "Connection timeout in seconds",
+      "description": "Sets the timeout in seconds to establish a connection or 0 for an infinite timeout",
+      "optional": true,
+      "value": "20",
+      "feel": "optional",
+      "group": "timeout",
+      "binding": {
+        "name": "connectionTimeoutInSeconds",
+        "type": "zeebe:input"
+      },
+      "type": "String"
+    },
+    {
+      "id": "resultVariable",
+      "label": "Result variable",
+      "description": "Name of variable to store the response in",
+      "group": "output",
+      "binding": {
+        "key": "resultVariable",
+        "type": "zeebe:taskHeader"
+      },
+      "type": "String",
+      "value": "output"
+    },
+    {
+      "id": "resultExpression",
+      "label": "Result expression",
+      "description": "Expression to map the response into process variables",
+      "feel": "required",
+      "group": "output",
+      "binding": {
+        "key": "resultExpression",
+        "type": "zeebe:taskHeader"
+      },
+      "type": "Text"
+    },
+    {
+      "id": "errorExpression",
+      "label": "Error expression",
+      "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/\" target=\"_blank\">documentation</a>.",
+      "feel": "required",
+      "group": "error",
+      "binding": {
+        "key": "errorExpression",
+        "type": "zeebe:taskHeader"
+      },
+      "type": "Text"
+    },
+    {
+      "id": "retryCount",
+      "label": "Retries",
+      "description": "Number of retries",
+      "value": "3",
+      "feel": "optional",
+      "group": "retries",
+      "binding": {
+        "property": "retries",
+        "type": "zeebe:taskDefinition"
+      },
+      "type": "String"
+    },
+    {
+      "id": "retryBackoff",
+      "label": "Retry backoff",
+      "description": "ISO-8601 duration to wait between retries",
+      "value": "PT0S",
+      "feel": "optional",
+      "group": "retries",
+      "binding": {
+        "key": "retryBackoff",
+        "type": "zeebe:taskHeader"
+      },
+      "type": "String"
+    }
+  ],
+  "icon": {
+    "contents": "data:image/png;base64,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"
+  }
+}
